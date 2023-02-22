@@ -1,11 +1,13 @@
 import logo from "./logo.svg";
 import "./App.css";
 import Register from "./Register";
+import Login from "./Login";
 
 function App() {
   return (
     <main className="App">
-      <Register />
+      {/* <Register /> */}
+      <Login />
     </main>
   );
 }
