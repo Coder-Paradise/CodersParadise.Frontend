@@ -10,6 +10,8 @@ import axios from "../api/axios";
 
 const USER_REGEX = /^[A-z][A-z0-9-_]{3,23}$/;
 const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
+const EMAIL_REGEX =
+  /^(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])/;
 const REGISTER_URL = "/auth/register";
 
 const Register = () => {
@@ -19,6 +21,10 @@ const Register = () => {
   const [user, setUser] = useState("");
   const [validName, setValidName] = useState(false);
   const [userFocus, setUserFocus] = useState(false);
+
+  const [email, setEmail] = useState("");
+  const [validEmail, setValidEmail] = useState(false);
+  const [emailFocus, setEmailFocus] = useState(false);
 
   const [pwd, setPwd] = useState("");
   const [validPwd, setValidPwd] = useState(false);
@@ -41,6 +47,13 @@ const Register = () => {
     console.log(user);
     setValidName(result);
   }, [user]);
+
+  useEffect(() => {
+    const result = EMAIL_REGEX.test(email);
+    console.log(result);
+    console.log(email);
+    setValidEmail(result);
+  }, [email]);
 
   useEffect(() => {
     const result = PWD_REGEX.test(pwd);
@@ -69,9 +82,10 @@ const Register = () => {
       const response = await axios.post(
         REGISTER_URL,
         JSON.stringify({
-          email: user,
+          username: user,
           password: pwd,
           confirmPassword: matchPwd,
+          email: email,
         }),
         {
           headers: { "Content-Type": "application/json" },
@@ -227,8 +241,46 @@ const Register = () => {
               Must match the first password input field.
             </p>
 
+            <label htmlFor="email">
+              Email:
+              <span className={validEmail ? "valid" : "hide"}>
+                <FontAwesomeIcon icon={faCheck} />
+              </span>
+              <span className={validEmail || !email ? "hide" : "invalid"}>
+                <FontAwesomeIcon icon={faTimes} />
+              </span>
+            </label>
+            <input
+              type="text"
+              id="email"
+              //ref={userRef}
+              autoComplete="off"
+              onChange={(e) => setEmail(e.target.value)}
+              value={email}
+              required
+              aria-invalid={validEmail ? "false" : "true"}
+              aria-describedby="uidnote"
+              onFocus={() => setEmailFocus(true)}
+              onBlur={() => setEmailFocus(false)}
+            />
+            <p
+              id="uidnote"
+              className={
+                emailFocus && email && !validEmail
+                  ? "instructions"
+                  : "offscreen"
+              }
+            >
+              <FontAwesomeIcon icon={faInfoCircle} />
+              Must be a valid email address format
+            </p>
+
             <button
-              disabled={!validName || !validPwd || !validMatch ? true : false}
+              disabled={
+                !validName || !validPwd || !validMatch || !validEmail
+                  ? true
+                  : false
+              }
             >
               Sign Up
             </button>
