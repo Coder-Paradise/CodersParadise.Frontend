@@ -20,8 +20,11 @@ const Users = () => {
         console.log(response.data);
         isMounted && setUsers(response.data);
       } catch (err) {
-        console.error(err);
-        //navigate("/login", { state: { from: location }, replace: true });
+        console.log(err);
+        /* Will need to research. Code at the bottom is needed if Promise.reject() is used on line#18&31 in useAxiosPrivate.js
+        if (err.code !== "ERR_CANCELED") 
+        */
+        navigate("/login", { state: { from: location }, replace: true });
       }
     };
 
