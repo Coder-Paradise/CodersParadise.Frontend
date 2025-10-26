@@ -43,9 +43,9 @@ const Login = () => {
       console.log(JSON.stringify(response?.data));
       //console.log(JSON.stringify(response));
       const accessToken = response?.data?.accessToken;
-      const refreshToken = response?.data?.refreshToken;
+      //const refreshToken = response?.data?.refreshToken;
       const roles = response?.data?.roles;
-      setAuth({ user, pwd, roles, accessToken, refreshToken });
+      setAuth({ user, pwd, roles, accessToken });
       setUser("");
       setPwd("");
       navigate(from, { replace: true });
@@ -101,7 +101,8 @@ const Login = () => {
         <br />
         <span className="line">
           {/*put router link here*/}
-          <a href="#">Sign Up</a>
+          {/* <a href="#">Sign Up</a> */}
+          <Link to="/register">Sign Up</Link>
         </span>
       </p>
     </section>
