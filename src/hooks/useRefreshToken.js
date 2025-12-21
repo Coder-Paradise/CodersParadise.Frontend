@@ -6,28 +6,28 @@ const useRefreshToken = () => {
   const authValues = useAuth();
 
   const refresh = async () => {
-    // const response = await axios.get("/auth/refresh", {
-    //   withCredentials: true,
-    // });
+    const response = await axios.get("/auth/refresh", {
+      withCredentials: true,
+    });
     console.log(authValues);
-    const response = await axios.post(
-      "/auth/refresh",
-      JSON.stringify({
-        ExpiredAccessToken: authValues.auth.accessToken,
-        RefreshToken: authValues.auth.refreshToken,
-      }),
-      {
-        headers: { "Content-Type": "application/json" },
-        withCredentials: true,
-      }
-    );
+    // const response = await axios.post(
+    //   "/auth/refresh",
+    //   JSON.stringify({
+    //     ExpiredAccessToken: authValues.auth.accessToken,
+    //     RefreshToken: authValues.auth.refreshToken,
+    //   }),
+    //   {
+    //     headers: { "Content-Type": "application/json" },
+    //     withCredentials: true,
+    //   }
+    // );
     setAuth((prev) => {
       console.log(JSON.stringify(prev));
       console.log(response.data.accessToken);
       return {
         ...prev,
-        accessToken: response.data.accessToken,
-        refreshToken: response.data.refreshToken,
+        roles: response.data.roles,
+        accessToken: response.data.accessToken
       };
     });
     return response.data.accessToken;
