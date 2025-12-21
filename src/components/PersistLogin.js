@@ -1,5 +1,5 @@
 import { Outlet } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import useRefreshToken from '../hooks/useRefreshToken';
 import useAuth from '../hooks/useAuth';
 
@@ -7,27 +7,32 @@ const PersistLogin = () => {
     const [isLoading, setIsLoading] = useState(true);
     const refresh = useRefreshToken();
     const { auth, persist } = useAuth();
+    //Workaround so useEffect does not run twice https://www.youtube.com/watch?v=81faZzp18NM
+    const effectRan = useRef(false);
 
     useEffect(() => {
-        let isMounted = true;
+        if (effectRan.current === false) {
 
-        const verifyRefreshToken = async () => {
-            try {
-                await refresh();
+            const verifyRefreshToken = async () => {
+                try {
+                    await refresh();
+                }
+                catch (err) {
+                    console.error(err);
+                }
+                finally {
+                    setIsLoading(false);
+                }
             }
-            catch (err) {
-                console.error(err);
-            }
-            finally {
-                setIsLoading(false);
+
+            // persist added here AFTER tutorial video
+            // Avoids unwanted call to verifyRefreshToken
+            !auth?.accessToken && persist ? verifyRefreshToken() : setIsLoading(false);
+
+            return () => { 
+                effectRan.current = true;
             }
         }
-
-        // persist added here AFTER tutorial video
-        // Avoids unwanted call to verifyRefreshToken
-        !auth?.accessToken ? verifyRefreshToken() : setIsLoading(false);
-
-        return () => isMounted = false;
     }, [])
 
     useEffect(() => {
