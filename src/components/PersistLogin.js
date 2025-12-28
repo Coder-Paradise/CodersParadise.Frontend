@@ -2,11 +2,13 @@ import { Outlet } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
 import useRefreshToken from '../hooks/useRefreshToken';
 import useAuth from '../hooks/useAuth';
+import useLocalStorage from "../hooks/useLocalStorage";
 
 const PersistLogin = () => {
     const [isLoading, setIsLoading] = useState(true);
     const refresh = useRefreshToken();
-    const { auth, persist } = useAuth();
+    const { auth } = useAuth();
+    const [persist] = useLocalStorage('persist', false);
     //Workaround so useEffect does not run twice https://www.youtube.com/watch?v=81faZzp18NM
     const effectRan = useRef(false);
 
