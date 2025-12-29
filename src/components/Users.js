@@ -17,8 +17,10 @@ const Users = () => {
         const response = await axiosPrivate.get("/users", {
           signal: controller.signal,
         });
+        //Only return user names from ../users API call to avoid returning sensitive data
+        const userNames = response.data?.map(user => user.username);
         console.log(response.data);
-        isMounted && setUsers(response.data);
+        isMounted && setUsers(userNames);
       } catch (err) {
         console.log(err);
         /* Will need to research. Code at the bottom is needed if Promise.reject() is used on line#18&31 in useAxiosPrivate.js
@@ -43,7 +45,7 @@ const Users = () => {
       {users?.length ? (
         <ul>
           {users.map((user, i) => (
-            <li key={i}>{user?.username}</li>
+            <li key={i}>{user}</li>
           ))}
         </ul>
       ) : (
